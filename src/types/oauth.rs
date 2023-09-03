@@ -1,101 +1,68 @@
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Scope {
+    #[serde(rename = "login")]
     Login,
+    #[serde(rename = "inquiry")]
     Inquiry,
+    #[serde(rename = "transfer")]
     Transfer,
+    #[serde(rename = "cardinfo")]
     CardInfo,
+    #[serde(rename = "fintechinfo")]
     FintechInfo,
+    #[serde(rename = "insuinfo")]
     InsuInfo,
+    #[serde(rename = "loaninfo")]
     LoanInfo,
 }
 
-impl From<&str> for Scope {
-    fn from(s: &str) -> Self {
-        match s {
-            "login" => Self::Login,
-            "inquiry" => Self::Inquiry,
-            "transfer" => Self::Transfer,
-            "cardinfo" => Self::CardInfo,
-            "fintechinfo" => Self::FintechInfo,
-            "insuinfo" => Self::InsuInfo,
-            "loaninfo" => Self::LoanInfo,
-            _ => unreachable!(),
-        }
-    }
-}
-
-impl Into<&str> for Scope {
-    fn into(self) -> &'static str {
-        match self {
-            Self::Login => "login",
-            Self::Inquiry => "inquiry",
-            Self::Transfer => "transfer",
-            Self::CardInfo => "cardinfo",
-            Self::FintechInfo => "fintechinfo",
-            Self::InsuInfo => "insuinfo",
-            Self::LoanInfo => "loaninfo",
-        }
-    }
-}
-
 #[repr(i32)]
+#[derive(Debug, Serialize_repr, Deserialize_repr)]
 pub enum AuthType {
     First = 0,
     Ignore = 2,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Lang {
+    #[serde(rename = "kor")]
     Kor,
+    #[serde(rename = "eng")]
     Eng,
 }
-impl Into<&str> for Lang {
-    fn into(self) -> &'static str {
-        match self {
-            Self::Kor => "kor",
-            Self::Eng => "eng",
-        }
-    }
-}
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum RegisterKind {
-    Account,   // 계좌
-    Card,      // 카드(신용/체크)
-    Pays,      // 선불
+    #[serde(rename = "A")]
+    Account, // 계좌
+    #[serde(rename = "C")]
+    Card, // 카드(신용/체크)
+    #[serde(rename = "F")]
+    Pays, // 선불
+    #[serde(rename = "I")]
     Insurance, // 보험
-    Loan,      // 캐피탈(대출/리스)
+    #[serde(rename = "L")]
+    Loan, // 캐피탈(대출/리스)
 }
 
-impl Into<&str> for RegisterKind {
-    fn into(self) -> &'static str {
-        match self {
-            Self::Account => "A",
-            Self::Card => "C",
-            Self::Pays => "F",
-            Self::Insurance => "I",
-            Self::Loan => "L",
-        }
-    }
-}
-
+#[derive(Debug, Serialize, Deserialize)]
 pub enum ClientDeviceType {
+    #[serde(rename = "PC")]
     PC,
+    #[serde(rename = "AD")]
     Andriod,
+    #[serde(rename = "IO")]
     Ios,
-}
-
-impl Into<&str> for ClientDeviceType {
-    fn into(self) -> &'static str {
-        match self {
-            Self::PC => "PC",
-            Self::Andriod => "AD",
-            Self::Ios => "IO",
-        }
-    }
 }
 
 /// 인증생략 이용 시 이용하는 헤더
 /// - user_seq_no(Kftc-Bfop-UserSeqNo): 기존 고객의 사용자일련번호
 /// - user_connection_info(Kftc-Bfop-UserCI): 사용자 CI(Connection Info)
 /// - access_token(Kftc-Bfop-AccessToken): "login" scope을 포함한 토큰
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Header {
     user_seq_no: i32,
     user_connection_info: String,
@@ -124,13 +91,14 @@ pub struct Header {
 /// - client_device_id: 고객의 접속 단말기를 구분할 수 있는 고유식별정보(PC: HDD Serial Number, Android: SSAID, Ios: UUID)
 /// - client_device_num: 고객의 접속 단말기의 휴대폰번호. 단말기 구분이 모바일(‘AD’, ‘IO’) 인 경우 설정(‘-’는 제외함)
 /// - client_device_version: 고객의 접속 단말기 OS 버전
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Body {
     response_type: String,
     client_id: String,
     redirect_uri: String,
     scope: Vec<Scope>,
-    client_info: Option<[u8; 256]>,
-    state: [u8; 32],
+    client_info: Option<Vec<u8>>,
+    state: Vec<u8>,
     auth_type: AuthType,
     lang: Option<Lang>,
     cellphone_cert_yn: Option<bool>,
