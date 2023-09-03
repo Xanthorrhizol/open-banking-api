@@ -1,3 +1,4 @@
+use super::ResponseCode;
 use crate::types::{AuthType, ClientDeviceType, HttpMethod, Lang, RegisterKind, Scope};
 use serde::{Deserialize, Serialize};
 
@@ -24,7 +25,7 @@ impl Header {
     }
 }
 
-/// 사용자인증 API request body
+/// 사용자인증/서비스등록확인 API request body
 /// - response_type: OAuth 2.0 인증요청 시 반환되는 형태(고정값 "code")
 /// - client_id: 오픈뱅킹에서 발급한 이용기관 앱의 Client ID
 /// - redirect_uri: 사용자인증이 성공하면 이용기관으로 연결되는 URL
@@ -72,8 +73,8 @@ pub(crate) struct RequestBody {
 }
 
 impl RequestBody {
-    pub(crate) fn new(
-        response_type: String,
+    /// 사용자인증 API Request Body
+    pub(crate) fn new_authorize(
         client_id: String,
         redirect_uri: String,
         scope: Vec<Scope>,
@@ -96,7 +97,7 @@ impl RequestBody {
         client_device_version: Option<String>,
     ) -> Self {
         Self {
-            response_type,
+            response_type: "code".to_string(),
             client_id,
             redirect_uri,
             scope,
@@ -119,17 +120,57 @@ impl RequestBody {
             client_device_version,
         }
     }
+
+    /// 서비스등록확인 API Request Body
+    pub(crate) fn new_authorize_account(
+        client_id: String,
+        redirect_uri: String,
+        scope: Vec<Scope>,
+        client_info: Option<Vec<u8>>,
+        state: Vec<u8>,
+        auth_type: AuthType,
+        lang: Option<Lang>,
+        cellphone_cert_yn: Option<bool>,
+        authorized_cert_yn: Option<bool>,
+        register_info: Option<RegisterKind>,
+    ) -> Self {
+        Self {
+            response_type: "code".to_string(),
+            client_id,
+            redirect_uri,
+            scope,
+            client_info,
+            state,
+            auth_type,
+            lang,
+            cellphone_cert_yn,
+            authorized_cert_yn,
+            account_hold_auth_yn: None,
+            register_info,
+            accountinfo_yn: None,
+            accountinfo_api_tran_id: None,
+            accountinfo_list_num: None,
+            client_device_type: None,
+            client_device_ip: None,
+            client_device_mac: None,
+            client_device_id: None,
+            client_device_num: None,
+            client_device_version: None,
+        }
+    }
 }
 
-/// 사용자인증 API response body(callback url로 호출됨)
+/// 사용자인증/서비스등록확인 API response body(callback url로 호출됨)
 /// - code: 사용자인증 성공 시 반환되는 코드
 /// - scope: Access Token 권한 범위 (다중 scope 가능)
 /// - client_info: 요청 시 이용기관이 세팅한 client_info 값을 그대로 전달
 /// - state: 요청 시 이용기관이 세팅한 state 값을 그대로 전달
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct ResponseBody {
+    rsp_code: ResponseCode,
+    rsp_message: String,
     code: Option<String>,
-    scope: Vec<Scope>,
-    client_info: String,
-    state: String,
+    scope: Option<Vec<Scope>>,
+    client_info: Option<String>,
+    state: Option<String>,
 }

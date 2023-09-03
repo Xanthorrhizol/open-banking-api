@@ -1,3 +1,4 @@
+use super::ResponseCode;
 use crate::types::{HttpMethod, Scope};
 use serde::{Deserialize, Serialize};
 
@@ -44,10 +45,12 @@ impl RequestBody {
 /// - user_seq_no: 사용자일련번호(10자리)
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct ResponseBody {
-    access_token: String,
-    token_type: String,
-    expires_in: u64,
-    refresh_token: String,
-    scope: Scope,
-    user_seq_no: String,
+    rsp_code: ResponseCode,
+    rsp_message: String,
+    access_token: Option<String>,
+    token_type: Option<String>,
+    expires_in: Option<u64>,
+    refresh_token: Option<String>,
+    scope: Option<Scope>,
+    user_seq_no: Option<String>,
 }
