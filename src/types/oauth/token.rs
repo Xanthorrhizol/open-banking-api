@@ -11,7 +11,7 @@ pub const METHOD: HttpMethod = HttpMethod::Post;
 /// - redirect_uri: Access Token 을 전달받을 Callback URL
 /// - grant_type: 3-legged 인증을 위한 권한부여 방식 지정(고정값: "authorization_code")
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct RequestBody {
+pub struct RequestBody {
     code: String,
     client_id: String,
     client_secret: String,
@@ -44,7 +44,7 @@ impl RequestBody {
 /// - scope: Access Token 권한 범위(사용자인증 시 요청했던 권한 범위와 동일)
 /// - user_seq_no: 사용자일련번호(10자리)
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct ResponseBody {
+pub struct ResponseBody {
     rsp_code: ResponseCode,
     rsp_message: String,
     access_token: Option<String>,

@@ -1,6 +1,7 @@
 use super::ResponseCode;
 use crate::types::{AuthType, ClientDeviceType, HttpMethod, Lang, RegisterKind, Scope};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 pub const METHOD: HttpMethod = HttpMethod::Post;
 
@@ -9,7 +10,7 @@ pub const METHOD: HttpMethod = HttpMethod::Post;
 /// - user_connection_info(Kftc-Bfop-UserCI): 사용자 CI(Connection Info)
 /// - access_token(Kftc-Bfop-AccessToken): "login" scope을 포함한 토큰
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct Header {
+pub struct Header {
     user_seq_no: String,
     user_connection_info: String,
     access_token: String,
@@ -22,6 +23,13 @@ impl Header {
             user_connection_info,
             access_token,
         }
+    }
+    pub fn get_hash(&self) -> HashMap<&'static str, String> {
+        let mut map = HashMap::new();
+        map.insert("user_seq_no", self.user_seq_no.clone());
+        map.insert("user_connection_info", self.user_connection_info.clone());
+        map.insert("access_token", self.access_token.clone());
+        map
     }
 }
 
@@ -48,7 +56,7 @@ impl Header {
 /// - client_device_num: 고객의 접속 단말기의 휴대폰번호. 단말기 구분이 모바일(‘AD’, ‘IO’) 인 경우 설정(‘-’는 제외함)
 /// - client_device_version: 고객의 접속 단말기 OS 버전
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct RequestBody {
+pub struct RequestBody {
     response_type: String,
     client_id: String,
     redirect_uri: String,
@@ -74,7 +82,7 @@ pub(crate) struct RequestBody {
 
 impl RequestBody {
     /// 사용자인증 API Request Body
-    pub(crate) fn new_authorize(
+    pub fn new_authorize(
         client_id: String,
         redirect_uri: String,
         scope: Vec<Scope>,
@@ -122,7 +130,7 @@ impl RequestBody {
     }
 
     /// 서비스등록확인 API Request Body
-    pub(crate) fn new_authorize_account(
+    pub fn new_authorize_account(
         client_id: String,
         redirect_uri: String,
         scope: Vec<Scope>,
@@ -166,7 +174,7 @@ impl RequestBody {
 /// - client_info: 요청 시 이용기관이 세팅한 client_info 값을 그대로 전달
 /// - state: 요청 시 이용기관이 세팅한 state 값을 그대로 전달
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct ResponseBody {
+pub struct ResponseBody {
     rsp_code: ResponseCode,
     rsp_message: String,
     code: Option<String>,

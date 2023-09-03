@@ -9,7 +9,7 @@ pub const METHOD: HttpMethod = HttpMethod::Post;
 /// - client_secret: 오픈뱅킹에서 발급한 이용기관 앱의 Client Secret
 /// - access_token: 폐기하고자 하는 Access Token
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct RequestBody {
+pub struct RequestBody {
     client_id: String,
     client_secret: String,
     access_token: String,
@@ -33,7 +33,7 @@ impl RequestBody {
 /// - access_token: 폐기한 Access Token
 /// - refresh_token: 폐기한 Refresh Token(Refresh Token 이 있는 경우 명시)
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct ResponseBody {
+pub struct ResponseBody {
     rsp_code: ResponseCode,
     rsp_message: String,
     client_id: Option<String>,

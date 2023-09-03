@@ -1,3 +1,4 @@
+pub(crate) mod endpoint;
 pub(crate) mod oauth;
 
 use serde::{Deserialize, Serialize};

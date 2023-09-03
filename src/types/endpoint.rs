@@ -3,20 +3,20 @@ const ENDPOINT_URL: &'static str = "https://openapi.openbanking.or.kr";
 #[cfg(feature = "test")]
 const ENDPOINT_URL: &'static str = "https://testapi.openbanking.or.kr";
 
-pub(crate) enum Endpoint {
+pub enum Endpoint {
     OAuth(OAuthEndpoint),     // 사용자인증(OAuth 2.0)
     User(UserEndpoint),       // 사용자/계좌관리
     Inquiry(InquiryEndpoint), // 조회서비스
 }
 
-pub(crate) enum OAuthEndpoint {
+pub enum OAuthEndpoint {
     Authorize,        // 사용자인증(GET)
     Token,            // 토큰발급(POST)
     Revoke,           // 토큰폐기(POST)
     AuthorizeAccount, // 서비스등록확인(POST)
 }
 
-pub(crate) enum UserEndpoint {
+pub enum UserEndpoint {
     UserInfo,         // 사용자정보조회(GET)
     Unlink,           // 사용자로그인연결동의해체(POST)
     ListAccount,      // 등록계좌조회(GET)
@@ -29,7 +29,7 @@ pub(crate) enum UserEndpoint {
     Quit,             // 사용자탈퇴(POST)
 }
 
-pub(crate) enum InquiryEndpoint {
+pub enum InquiryEndpoint {
     Balance,         // 잔액조회(GET)
     ListTransaction, // 거래내역조회(GET)
     RealName,        // 계좌실명조회(POST)
