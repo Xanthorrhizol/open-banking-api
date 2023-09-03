@@ -1,5 +1,5 @@
 use super::ResponseCode;
-use crate::types::{AuthType, ClientDeviceType, HttpMethod, Lang, RegisterKind, Scope};
+use crate::types::{AuthType, ClientDeviceType, GetHash, HttpMethod, Lang, RegisterKind, Scope};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -24,7 +24,9 @@ impl Header {
             access_token,
         }
     }
-    pub fn get_hash(&self) -> HashMap<&'static str, String> {
+}
+impl GetHash for Header {
+    fn get_hash(&self) -> HashMap<&'static str, String> {
         let mut map = HashMap::new();
         map.insert("user_seq_no", self.user_seq_no.clone());
         map.insert("user_connection_info", self.user_connection_info.clone());

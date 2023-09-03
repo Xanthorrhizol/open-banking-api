@@ -3,6 +3,11 @@ pub(crate) mod oauth;
 
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+use std::collections::HashMap;
+
+pub trait GetHash {
+    fn get_hash(&self) -> HashMap<&'static str, String>;
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum HttpMethod {

@@ -1,6 +1,6 @@
-use crate::types::{endpoint::*, oauth::*, HttpMethod};
+use crate::types::{endpoint::*, GetHash, HttpMethod};
 use crate::ApiError;
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 
 pub struct OAuthApi {
     client: reqwest::Client,
@@ -13,15 +13,17 @@ impl OAuthApi {
         }
     }
 
-    pub async fn call<R>(
+    pub async fn call<ReqHeader, ReqBody, ResBody>(
         &self,
         endpoint: Endpoint,
         method: HttpMethod,
-        header: Option<authorize::Header>,
-        body: Option<authorize::RequestBody>,
-    ) -> Result<R, ApiError>
+        header: Option<ReqHeader>,
+        body: Option<ReqBody>,
+    ) -> Result<ResBody, ApiError>
     where
-        R: DeserializeOwned,
+        ReqHeader: Serialize + GetHash,
+        ReqBody: Serialize,
+        ResBody: DeserializeOwned,
     {
         let result = match method {
             HttpMethod::Get => match header {
@@ -103,7 +105,7 @@ impl OAuthApi {
                 }
             }
         };
-        let parsed: R = serde_json::from_str(&result)?;
+        let parsed: ResBody = serde_json::from_str(&result)?;
         Ok(parsed)
     }
 }
